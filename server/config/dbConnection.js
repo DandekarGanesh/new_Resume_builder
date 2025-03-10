@@ -7,7 +7,7 @@ const connectionToDB = async () => {
     try {
 
         const { connection } = await mongoose.connect(
-            process.env.MONGO_URL || "mongodb://localhost/resume-builder",
+            process.env.MONGO_URL,
         );
     
         if(connection) {
