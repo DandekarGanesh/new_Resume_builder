@@ -9,7 +9,7 @@ import crypto from 'crypto';
 const cookieOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000, // cookie set for 7 days
     httpOnly: true,
-    // secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production',
     secure: true,
     sameSite: 'None'
 }
@@ -23,17 +23,29 @@ const register = async (req, res, next) => {
         const { fullName, password, email } = req.body;
 
         if( !fullName || !password || !email) {
-            return next(new AppError('All fields are required', 400));
+            return res.status(400)
+                .json({
+                    success: false,
+                    message: "All fields are required",
+                });
         }
     
         if(!validator.validate(email)) {
-            return next(new AppError('Enter a valid Email', 400));   
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Enter a Valid Email",
+            });   
         }
     
         const userExist = await User.findOne({ email });
     
         if(userExist) {
-            return next(new AppError('Email already Exist !!', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Email Already Exist",
+            });
         }
     
     
@@ -44,7 +56,11 @@ const register = async (req, res, next) => {
         });
         
         if(!user) {
-            return next(new AppError('User registration fail, please try again', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Registration fail please try again",
+            });
         }
     
         
@@ -83,7 +99,11 @@ const login = async (req,res, next) => {
         const { email, password } = req.body;
     
         if(!email || !password ) {
-            return next(new AppError('All fields are required', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "All fields are required",
+            });
         }
     
         const user = await User.findOne({ 
@@ -92,7 +112,11 @@ const login = async (req,res, next) => {
 
 
         if(!user || !(await user.comparePassword(password))) {
-           return next(new AppError('Email or password does not match', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Email or Password does not match",
+            });
         }
         
 
@@ -185,17 +209,29 @@ const forgotPassword = async (req, res, next) => {
         const { email } = req.body;
 
         if(!email) {
-            return next(new AppError('Email is required', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Email is required",
+            });
         }
     
         if(!validator.validate(email)) {
-            return next(new AppError('Enter a valid Email', 400));   
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Enter a valid email",
+            });
         }
     
         const user = await User.findOne({ email });
     
         if(!user) {
-            return next(new AppError('Email not registered', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Email not registered",
+            });
         }
     
         const resetToken = await user.generatePasswordResetToken();
@@ -205,7 +241,7 @@ const forgotPassword = async (req, res, next) => {
     
         // sendEmail
         const sub = "Reset Password";
-        const message = `reset your password ...... ${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}`;
+        const message = `reset your password ...... ${process.env.FRONTEND_URL}/resetPassword/${resetToken}`;
 
         await sendEmail(email, sub, message);
 
@@ -242,7 +278,12 @@ const resetPassword = async (req, res, next) => {
         const { password } = req.body;
     
         if(!resetToken || !password) {
-            return next(new AppError('resetToken and password required', 400));
+
+            return res.status(400)
+            .json({
+                success: false,
+                message: "resetToken and password required",
+            });
         }
     
         const forgotPasswordToken = crypto
@@ -260,7 +301,12 @@ const resetPassword = async (req, res, next) => {
         
     
         if(!user) {
-            return next(new AppError('token is invalid or expire, please try again', 400));
+            
+            return res.status(400)
+            .json({
+                success: false,
+                message: "token is invalid or expire, please try again",
+            });
         }
     
     
@@ -296,20 +342,32 @@ const changePassword = async (req,res, next) => {
         const { id } = req.user;
     
         if(!oldPassword || !newPassword) {
-            return next(new AppError('All fields are mandatory', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "All fields are mandatory",
+            });
         }
     
     
         const user = await User.findById(id).select('+password');
     
         if(!user) {
-            return next(new AppError('user does not exist', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "User does not Exist !!",
+            });
         }
     
         const isPasswordValid = await user.comparePassword(oldPassword);
     
         if(!isPasswordValid) {
-            return next(new AppError('Old password does not match', 400));
+            return res.status(400)
+            .json({
+                success: false,
+                message: "Old password does not match",
+            });
         }
     
         user.password = newPassword;
@@ -345,7 +403,11 @@ const updateUser = async (req, res, next) => {
     const user = await User.findById(id);
 
     if(!user) {
-        return next(new AppError('User does not exist', 400));
+        return res.status(400)
+            .json({
+                success: false,
+                message: "User does not exist",
+            });
     }
 
     if(fullName) {

@@ -1,5 +1,6 @@
 import express from "express";
 const userRouter = express.Router();
+import { isLoggedIn } from "../middlewares/authMiddleware.js";
 import {login,
     logout,
     register,
@@ -20,28 +21,28 @@ userRouter.route("/login")
 
 // logout user
 userRouter.route("/logout")
-           .post(logout);
+           .post(isLoggedIn, logout);
 
 // get user
 userRouter.route("/getUser") 
-           .get(getProfile);
+           .get(isLoggedIn, getProfile);
 
 // forgot password
 userRouter.route("/forgotPassword")
           .post(forgotPassword);
 
 // reset password
-userRouter.route("/resetPassword")
+userRouter.route("/resetPassword/:resetToken")
           .post(resetPassword);
 
 // change password
 userRouter.route("/changePassword")
-          .post(changePassword);
+          .post(isLoggedIn, changePassword);
 
 
 // update user
 userRouter.route("/updateUser")
-          .post(updateUser);
+          .post(isLoggedIn, updateUser);
 
 
 export default userRouter;

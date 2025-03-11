@@ -32,11 +32,11 @@ const Navbar = () => {
               <div className="flex space-x-8">
                 {[
                   "Home",
-                  "Products",
+                  "New Resume",
                   "Solutions",
-                  "Resources",
                   "About Us",
                   "Contact",
+                  "Signup",
                 ].map((item) => (
                   <Link
                     key={item}

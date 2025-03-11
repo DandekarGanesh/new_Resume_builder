@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto'
@@ -28,6 +29,12 @@ const userSchema = new Schema({
         required: [true, 'Password is required'],
         minLength: [4, 'Password must me at least 4 character'],
         select: false,  // dont give password by default ... if explicit query called then give
+     },
+
+     resumes: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Resume',
+        required: true,
      },
 
      forgotPasswordToken: String,
