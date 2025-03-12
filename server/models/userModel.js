@@ -31,11 +31,11 @@ const userSchema = new Schema({
         select: false,  // dont give password by default ... if explicit query called then give
      },
 
-     resumes: {
+     resumes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Resume',
         required: true,
-     },
+     }],
 
      forgotPasswordToken: String,
      forgotPasswordExpiry: Date,
@@ -62,7 +62,7 @@ userSchema.methods = {
 
     generateJWTToken: async function() {
         return await jwt.sign(
-            { id: this._id, email: this.email, subscription: this.subscription, role: this.role},
+            { id: this._id, email: this.email},
             process.env.JWT_SECRET,
             {
                 expiresIn: process.env.JWT_EXPIRY,

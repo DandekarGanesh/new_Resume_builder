@@ -105,7 +105,7 @@ const Navbar = () => {
                   key={item}
                   className="cursor-pointer block w-full text-left text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 text-base font-medium !rounded-button cursor-pointer whitespace-nowrap"
                 >
-                <Linkink> {item} </Linkink>  
+                <Link> {item} </Link>  
                 </button>
               ))}
               <form onSubmit={handleSearch} className="px-3 py-2">

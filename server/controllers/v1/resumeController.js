@@ -5,7 +5,7 @@ import User from '../../models/userModel.js';
 const createResume = async (req, res) => {
     try {
         // Ensure that the user is authenticated and `user._id` is available
-        const userId = req.user._id;
+        const userId = req.user.id;
     
         // Get the resume data from the request body
         const { personalInfo, workExperience, education, skills, certifications, projects } = req.body;
